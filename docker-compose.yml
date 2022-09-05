@@ -1,11 +1,16 @@
-
 version: '3.8'
 services:
-
-  # Docker connection string: postgres://postgres:postgres@localhost:5432/
+  nest-api:
+    container_name: nest_api
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3333:3333
 
   postgres:
     image: postgres:13.5
+    container_name: postgres
     restart: always
     environment:
       - POSTGRES_USER=postgres
@@ -17,3 +22,6 @@ services:
 
 volumes:
   postgres:
+
+networks:
+  todoapp-nest-crud:

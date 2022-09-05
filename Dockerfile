@@ -1,24 +1,14 @@
-FROM node:16
-
-# Create app directory
-WORKDIR /app
-
-# A wildcard is used to ensure both package.json AND package-lock.json are copied
-COPY package*.json ./
-COPY prisma ./prisma/
-
-# Install app dependencies
-RUN npm install
-
+FROM node:14
+WORKDIR /workspace
 COPY . .
-
-RUN npm run build
-
-FROM node:16
-
-COPY --from=builder /app/node_modules ./node_modules
-COPY --from=builder /app/package*.json ./
-COPY --from=builder /app/dist ./dist
-
-EXPOSE 3000
-CMD [ "npm", "run", "start:prod" ]
+# RUN npm config set python $(which python)
+# RUN npm config set python "/usr/bin/python2.7" -g
+# # RUN npm i -g node-gyp@latest && npm config set node_gyp "/usr/local/lib/node_modules/node-gyp/bin/node-gyp.js"
+# # RUN ["npm", "install", "-g", "@nrwl/cli"]
+# # RUN ["npm", "install"]
+# RUN npm i @nrwl/cli
+COPY /prisma ./prisma/
+RUN npm install
+EXPOSE 3333
+EXPOSE 9229
+CMD [  "npm", "run", "start:migrate:dev" ]
