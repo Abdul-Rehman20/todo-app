@@ -8,10 +8,8 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-
-    "start:migrate:dev": "prisma migrate deploy && nx serve api"
-
-
+    "test:watch": "cjest --watch --maxWorkers=1",
+    "start:migrate:serve": "prisma migrate deploy && nx serve api"
   },
   "private": true,
   "dependencies": {
@@ -33,6 +31,7 @@
     "class-validator": "^0.13.2",
     "reflect-metadata": "^0.1.13",
     "rxjs": "~7.5.0",
+    "supertest": "^6.2.4",
     "tslib": "^2.3.0",
     "zone.js": "~0.11.4"
   },
@@ -54,11 +53,13 @@
     "@nrwl/nest": "14.5.10",
     "@nrwl/node": "14.5.10",
     "@nrwl/workspace": "14.5.10",
-    "@types/jest": "27.4.1",
+    "@types/jest": "^27.4.1",
+    "@types/mocha": "^9.1.1",
     "@types/node": "16.11.7",
     "@typescript-eslint/eslint-plugin": "^5.29.0",
     "@typescript-eslint/parser": "^5.29.0",
     "cypress": "^10.2.0",
+    "dotenv-cli": "^6.0.0",
     "eslint": "~8.15.0",
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.10.3",

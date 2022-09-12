@@ -1,5 +1,9 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
-import { PrismaClient, Tasks } from '@prisma/client';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import { PrismaClient, Tasks, TaskStatus } from '@prisma/client';
 import { TasksDTO } from './dto/create-task.dto';
 import { UpdateTasksDTO } from './dto/update-task.dto';
 
@@ -32,6 +36,14 @@ export class TasksService {
 
     if (!updateTask || updateTask.id !== taskId) {
       throw new NotFoundException(`Task with id ${taskId} not found!`);
+    }
+
+    if (
+      updateTaskDto.status != TaskStatus.DONE &&
+      updateTaskDto.status != TaskStatus.IN_PROGRESS &&
+      updateTaskDto.status != TaskStatus.PENDING
+    ) {
+      throw new BadRequestException('TaskStatus Value Does Not Match');
     }
 
     return prisma.tasks.update({

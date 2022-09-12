@@ -8,16 +8,25 @@ import {
   Delete,
   NotFoundException,
 } from '@nestjs/common';
+import { TaskStatus } from '@prisma/client';
+import { UsersService } from '../users/users.service';
 import { TasksDTO } from './dto/create-task.dto';
 import { UpdateTasksDTO } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
 
 @Controller('tasks')
 export class TasksController {
-  constructor(private readonly tasksService: TasksService) {}
+  constructor(
+    private readonly tasksService: TasksService,
+    private readonly usersService: UsersService
+  ) {}
 
   @Post()
-  create(@Body() newTaskDto: TasksDTO) {
+  async create(@Body() newTaskDto: TasksDTO) {
+    const task = await this.usersService.findOneUsername(newTaskDto.userId);
+    if (!task) {
+      throw new NotFoundException('Username Not Found');
+    }
     return this.tasksService.create(newTaskDto);
   }
 
