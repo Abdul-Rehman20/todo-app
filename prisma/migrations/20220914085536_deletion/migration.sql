@@ -24,4 +24,4 @@ CREATE UNIQUE INDEX "Tasks_id_key" ON "Tasks"("id");
 CREATE UNIQUE INDEX "Users_username_key" ON "Users"("username");
 
 -- AddForeignKey
-ALTER TABLE "Tasks" ADD CONSTRAINT "Tasks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("username") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Tasks" ADD CONSTRAINT "Tasks_userId_fkey" FOREIGN KEY ("userId") REFERENCES "Users"("username") ON DELETE CASCADE ON UPDATE CASCADE;

@@ -15,7 +15,7 @@ model Tasks {
   title       String
   description String?
   status      TaskStatus @default(PENDING)
-  user        Users?     @relation(fields: [userId], references: [username])
+  user        Users?     @relation(fields: [userId], references: [username], onDelete: Cascade)
   userId      String
 }
 

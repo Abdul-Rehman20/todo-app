@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, Users } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -14,7 +10,7 @@ export class UsersService {
   async create(createUserDto: CreateUserDto) {
     const user = await this.findOneUsername(createUserDto.username);
     if (user) {
-      throw new BadRequestException('Username Already taken');
+      throw new NotFoundException('Username Already taken');
     }
     return await prisma.users.create({ data: createUserDto });
   }
