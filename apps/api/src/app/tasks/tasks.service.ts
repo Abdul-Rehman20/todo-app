@@ -1,8 +1,4 @@
-import {
-  BadRequestException,
-  Injectable,
-  NotFoundException,
-} from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, Tasks, TaskStatus } from '@prisma/client';
 import { TasksDTO } from './dto/create-task.dto';
 import { UpdateTasksDTO } from './dto/update-task.dto';
@@ -43,7 +39,9 @@ export class TasksService {
       updateTaskDto.status != TaskStatus.IN_PROGRESS &&
       updateTaskDto.status != TaskStatus.PENDING
     ) {
-      throw new BadRequestException('TaskStatus Value Does Not Match');
+      throw new NotFoundException(
+        'Status value must be "DONE" "IN_PROGRESS" "PENDING"'
+      );
     }
 
     return prisma.tasks.update({
