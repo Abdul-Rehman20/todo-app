@@ -8,7 +8,6 @@
     "start": "nx serve",
     "build": "nx build",
     "test": "nx test",
-    "test:watch": "cjest --watch --maxWorkers=1",
     "start:migrate:serve": "prisma migrate deploy && nx serve api"
   },
   "private": true,
@@ -22,6 +21,7 @@
     "@angular/platform-browser-dynamic": "~14.1.1",
     "@angular/router": "~14.1.1",
     "@nestjs/common": "^9.0.0",
+    "@nestjs/config": "^2.2.0",
     "@nestjs/core": "^9.0.0",
     "@nestjs/mapped-types": "^1.1.0",
     "@nestjs/platform-express": "^9.0.0",
@@ -64,6 +64,7 @@
     "eslint-config-prettier": "8.1.0",
     "eslint-plugin-cypress": "^2.10.3",
     "jest": "27.5.1",
+    "jest-mock-extended": "^2.0.4",
     "jest-preset-angular": "~11.1.2",
     "nx": "14.5.10",
     "prettier": "^2.6.2",
