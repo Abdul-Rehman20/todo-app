@@ -1,7 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable, NotFoundException, Res } from '@nestjs/common';
 import { PrismaClient, Users } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import * as bcrypt from 'bcrypt';
 
 const prisma = new PrismaClient();
 
@@ -12,6 +13,10 @@ export class UsersService {
     if (user) {
       throw new NotFoundException('Username Already taken');
     }
+    const salt = await bcrypt.genSalt(10);
+    const hash = await bcrypt.hash(createUserDto.password, salt);
+    createUserDto.password = hash;
+
     return await prisma.users.create({ data: createUserDto });
   }
 

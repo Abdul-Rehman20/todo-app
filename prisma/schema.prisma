@@ -21,6 +21,7 @@ model Tasks {
 
 model Users {
   username String  @unique
+  password String
   name     String
   email    String?
   tasks    Tasks[]
