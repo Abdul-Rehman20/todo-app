@@ -7,13 +7,17 @@ import {
   Param,
   Delete,
   NotFoundException,
+  UseInterceptors,
 } from '@nestjs/common';
+import { JwtService } from '@nestjs/jwt';
 import { TaskStatus } from '@prisma/client';
+import { AuthInterceptor } from '../users/interceptor/auth.interceptor';
 import { UsersService } from '../users/users.service';
 import { TasksDTO } from './dto/create-task.dto';
 import { UpdateTasksDTO } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
 
+@UseInterceptors(AuthInterceptor)
 @Controller('tasks')
 export class TasksController {
   constructor(
