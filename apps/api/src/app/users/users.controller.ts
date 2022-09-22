@@ -6,20 +6,20 @@ import {
   Patch,
   Param,
   Delete,
-  NotFoundException,
   Res,
   Req,
-  UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import * as bcrypt from 'bcrypt';
 import { JwtService } from '@nestjs/jwt';
 import { Request, Response } from 'express';
-import { AuthInterceptor } from './interceptor/auth.interceptor';
 import { Serialize } from '../interceptors/serialize.interceptor';
 import { userDto } from './dto/user.dto';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from './decorator/get-user.decorator';
+import { Users } from '@prisma/client';
 
 @Controller('users')
 @Serialize(userDto)
@@ -37,31 +37,18 @@ export class UsersController {
   @Post('login')
   async login(
     @Body('username') username: string,
-    @Body('password') password: string,
-    @Res({ passthrough: true }) response: Response
+    @Body('password') password: string
   ) {
-    const user = await this.usersService.findOneUsername(username);
-    if (!user) {
-      throw new NotFoundException('User Does Not Exist');
-    }
-    if (!(await bcrypt.compare(password, user.password))) {
-      throw new NotFoundException('Bad Password');
-    }
-    const jwt = await this.jwtService.signAsync({ username: user.username });
-    response.cookie('jwt', jwt, { httpOnly: true });
-    return user;
+    return this.usersService.login(username, password);
   }
 
-  @UseInterceptors(AuthInterceptor)
+  @UseGuards(AuthGuard())
   @Get('whoami')
-  async user(@Req() request: Request) {
-    const cookie = request.cookies['jwt'];
-    const data = await this.jwtService.verifyAsync(cookie);
-    const user = await this.usersService.findOneUsername(data['username']);
+  async user(@GetUser() user: Users) {
     return user;
   }
 
-  @UseInterceptors(AuthInterceptor)
+  @UseGuards(AuthGuard())
   @Post('logout')
   async logout(@Res({ passthrough: true }) response: Response) {
     response.clearCookie('jwt');
@@ -69,19 +56,19 @@ export class UsersController {
     return 'Success';
   }
 
-  @UseInterceptors(AuthInterceptor)
+  @UseGuards(AuthGuard())
   @Get()
   findAll() {
     return this.usersService.findAll();
   }
 
-  @UseInterceptors(AuthInterceptor)
+  @UseGuards(AuthGuard())
   @Get(':username')
   findOne(@Param('username') username: string) {
     return this.usersService.findOne(username);
   }
 
-  @UseInterceptors(AuthInterceptor)
+  @UseGuards(AuthGuard())
   @Patch(':username')
   update(
     @Param('username') username: string,
@@ -90,7 +77,7 @@ export class UsersController {
     return this.usersService.update(username, updateUserDto);
   }
 
-  @UseInterceptors(AuthInterceptor)
+  @UseGuards(AuthGuard())
   @Delete(':username')
   remove(@Param('username') username: string) {
     return this.usersService.remove(username);

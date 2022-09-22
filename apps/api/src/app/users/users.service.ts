@@ -3,11 +3,14 @@ import { PrismaClient, Users } from '@prisma/client';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import * as bcrypt from 'bcrypt';
+import { JwtService } from '@nestjs/jwt';
+import { JwtPayLoad } from './dto/jwt-payload.interface';
 
 const prisma = new PrismaClient();
 
 @Injectable()
 export class UsersService {
+  constructor(private jwtService: JwtService) {}
   async create(createUserDto: CreateUserDto) {
     const user = await this.findOneUsername(createUserDto.username);
     if (user) {
@@ -84,5 +87,18 @@ export class UsersService {
         username: username,
       },
     });
+  }
+
+  async login(username: string, password: string) {
+    const user = await this.findOneUsername(username);
+    if (!user) {
+      throw new NotFoundException('User Does Not Exist');
+    }
+    if (!(await bcrypt.compare(password, user.password))) {
+      throw new NotFoundException('Bad Password');
+    }
+    const payload: JwtPayLoad = { username };
+    const accessToken = await this.jwtService.signAsync(payload);
+    return accessToken;
   }
 }

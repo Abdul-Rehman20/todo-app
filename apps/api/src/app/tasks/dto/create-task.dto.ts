@@ -9,8 +9,4 @@ export class TasksDTO {
   @IsString()
   @IsNotEmpty()
   description: string;
-
-  @IsNotEmpty()
-  @IsString()
-  userId: string;
 }

@@ -1,5 +1,6 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaClient, Tasks, TaskStatus } from '@prisma/client';
+import { GetUser } from '../users/decorator/get-user.decorator';
 import { TasksDTO } from './dto/create-task.dto';
 import { UpdateTasksDTO } from './dto/update-task.dto';
 
@@ -7,8 +8,14 @@ const prisma = new PrismaClient();
 
 @Injectable()
 export class TasksService {
-  create(newTask: TasksDTO) {
-    return prisma.tasks.create({ data: newTask });
+  create(user, newTask: TasksDTO) {
+    return prisma.tasks.create({
+      data: {
+        title: newTask.title,
+        description: newTask.description,
+        userId: user.username,
+      },
+    });
   }
 
   findAll(): Promise<Tasks[]> {

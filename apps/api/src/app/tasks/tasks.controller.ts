@@ -8,16 +8,17 @@ import {
   Delete,
   NotFoundException,
   UseInterceptors,
+  UseGuards,
 } from '@nestjs/common';
-import { JwtService } from '@nestjs/jwt';
-import { TaskStatus } from '@prisma/client';
-import { AuthInterceptor } from '../users/interceptor/auth.interceptor';
 import { UsersService } from '../users/users.service';
 import { TasksDTO } from './dto/create-task.dto';
 import { UpdateTasksDTO } from './dto/update-task.dto';
 import { TasksService } from './tasks.service';
+import { AuthGuard } from '@nestjs/passport';
+import { GetUser } from '../users/decorator/get-user.decorator';
 
-@UseInterceptors(AuthInterceptor)
+// @UseInterceptors(AuthInterceptor)
+@UseGuards(AuthGuard())
 @Controller('tasks')
 export class TasksController {
   constructor(
@@ -26,12 +27,12 @@ export class TasksController {
   ) {}
 
   @Post()
-  async create(@Body() newTaskDto: TasksDTO) {
-    const task = await this.usersService.findOneUsername(newTaskDto.userId);
+  async create(@GetUser() user, @Body() newTaskDto: TasksDTO) {
+    const task = await this.usersService.findOneUsername(user.username);
     if (!task) {
       throw new NotFoundException('Username Not Found');
     }
-    return this.tasksService.create(newTaskDto);
+    return this.tasksService.create(user, newTaskDto);
   }
 
   @Get()
